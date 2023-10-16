@@ -67,9 +67,29 @@ vpColVector ecn::RobotTurret::inverseGeometry(const vpHomogeneousMatrix &fMe_des
     // build corresponding oMw and explode into 12 elements
     const auto [xx,xy,xz,yx,yy,yz,zx,zy,zz,tx,ty,tz] = explodeMatrix(fMe_des);
 
-    // TODO add candidates
+            // TODO add candidates
 
+    const auto d=0.1; // meters
+    const auto b=0.5; // meters
 
+    for(auto q1: solveType3(-1, 0, yx, 0, 1, yy))
+    {
+        for(auto q2: solveType3(1, 0, xz, 0, 1, zz))
+        {
+            if (isNull(cos(q2))){
+                continue;
+               // const auto q3 = tz - b - d;
+               // addCandidate({q1,q2,q3});
+            }
+
+            else{
+            // can divide by c3
+            const auto c2{cos(q2)};
+            const auto q3 = (tz - b) / c2 - d;
+            addCandidate({q1,q2,q3});
+            }
+        }
+    }
     return bestCandidate(q0);
 }
 
@@ -78,32 +98,32 @@ vpMatrix ecn::RobotTurret::fJw(const vpColVector &q) const
 {
     vpMatrix J(6, dofs);
 
-       const auto c1{cos(q[0])};
-       const auto c2{cos(q[1])};
-       const auto s1{sin(q[0])};
-       const auto s2{sin(q[1])};
+    const auto c1{cos(q[0])};
+    const auto c2{cos(q[1])};
+    const auto s1{sin(q[0])};
+    const auto s2{sin(q[1])};
 
-       const auto d=0.1; //meters
+    const auto d=0.1; //meters
 
-       J[0][0] = (d + q[2])*s1*s2;
-       J[0][1] = (-d - q[2])*c1*c2;
-       J[0][2] = -s2*c1;
-       J[1][0] = (-d - q[2])*s2*c1;
-       J[1][1] = (-d - q[2])*s1*c2;
-       J[1][2] = -s1*s2;
-       J[2][0] = 0;
-       J[2][1] = -(d + q[2])*s2;
-       J[2][2] = c2;
-       J[3][0] = 0;
-       J[3][1] = s1;
-       J[3][2] = 0;
-       J[4][0] = 0;
-       J[4][1] = -c1;
-       J[4][2] = 0;
-       J[5][0] = 1.;
-       J[5][1] = 0;
-       J[5][2] = 0;
-       // End of Jacobian code
+    J[0][0] = (d + q[2])*s1*s2;
+    J[0][1] = (-d - q[2])*c1*c2;
+    J[0][2] = -s2*c1;
+    J[1][0] = (-d - q[2])*s2*c1;
+    J[1][1] = (-d - q[2])*s1*c2;
+    J[1][2] = -s1*s2;
+    J[2][0] = 0;
+    J[2][1] = -(d + q[2])*s2;
+    J[2][2] = c2;
+    J[3][0] = 0;
+    J[3][1] = s1;
+    J[3][2] = 0;
+    J[4][0] = 0;
+    J[4][1] = -c1;
+    J[4][2] = 0;
+    J[5][0] = 1.;
+    J[5][1] = 0;
+    J[5][2] = 0;
+    // End of Jacobian code
 
 
     return J;
