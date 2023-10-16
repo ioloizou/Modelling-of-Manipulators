@@ -66,7 +66,20 @@ int main(int argc, char ** argv)
             v = robot->guiVelocityScrew();
 
             // TODO: fill the fJw function
+            auto Mfe = M.getRotationMatrix();
+            vpMatrix Map_matrix;
+            Map_matrix.reshape(6,6);
+
+            ecn::putAt(Map_matrix, Mfe, 0, 0);
+            ecn::putAt(Map_matrix, Mfe, 3, 3);
+
+            auto fve = Map_matrix*v;
+
+            auto qdot = (robot->fJe(q).pseudoInverse())*(fve);
+
+
             // TODO: compute vCommand
+            auto vCommand = qdot;
 
             robot->setJointVelocity(vCommand);
         }
