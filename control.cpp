@@ -158,6 +158,21 @@ int main(int argc, char ** argv)
             // TODO: compute joint velocity command
 
 
+            auto Merror = Md.inverse() * M;
+            auto translation = Merror.getTranslationVector();
+            auto thetau = Merror.getThetaUVector();
+
+            auto lambda = robot->lambda();
+
+            vpColVector v = lambda * Md.getRotationMatrix() * translation;
+            vpColVector omega = lambda * M.getRotationMatrix() * thetau.getTheta() * thetau.getU();
+
+            vpColVector velocityVector(6);
+            ecn::putAt(velocityVector, v, 0);
+            ecn::putAt(velocityVector, omega ,3);
+
+
+            vCommand = robot->fJe(q).pseudoInverse() * velocityVector;
 
             robot->setJointVelocity(vCommand);
         }
