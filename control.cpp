@@ -108,7 +108,7 @@ int main(int argc, char ** argv)
 
             // TODO: compute qCommand from q0, qf, t, t0 and tf
             auto Pt{0};
-            auto t{0};
+            double t{0};
             auto tf_vel{0};
             auto tf_acc{0};
             auto tf_chosen{0};
@@ -135,10 +135,17 @@ int main(int argc, char ** argv)
         else if(robot->mode() == ControlMode::STRAIGHT_LINE_P2P)
         {
             // go from M0 to Md in 1 sec
-            tf = 1;
+            tf = 0.1;
 
             // TODO: compute qCommand from M0, Md, t, t0 and tf
             // use robot->intermediaryPose to build poses between M0 and Md
+            double alpha = (t-t0)/tf ;
+
+//            if (alpha > 1) alpha = 1;
+
+            vpHomogeneousMatrix M_inder = robot->intermediaryPose(M0, Md, alpha);
+
+            qCommand = robot->inverseGeometry(M_inder, q);
 
             robot->setJointPosition(qCommand);
         }
