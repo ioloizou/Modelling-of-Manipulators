@@ -1,4 +1,4 @@
-#include <ecn_manip/robot_init.h>
+    #include <ecn_manip/robot_init.h>
 
 using namespace std;
 using namespace ecn;
@@ -107,6 +107,26 @@ int main(int argc, char ** argv)
             }
 
             // TODO: compute qCommand from q0, qf, t, t0 and tf
+            auto Pt{0};
+            auto t{0};
+            auto tf_vel{0};
+            auto tf_acc{0};
+            auto tf_chosen{0};
+
+
+
+            for (int i=0; i<6 ; i++){                       //check that qf respects velocity and acceleration constraints
+                tf_vel = (3 * abs(qf[i] - q0[i])) / (2 * vMax[i]);
+                tf_acc = sqrt((6 * abs(qf[i] - q0[i])) / aMax[i]);
+                tf_chosen = max(tf_vel,tf_acc);
+                if (tf_chosen > tf){
+                    tf = tf_chosen;
+                }
+            }
+
+            Pt = pow(3 * (t/tf), 2) - (-2 * (pow(t/tf, 3)));
+
+            qCommand = q0 + Pt * qf - q0;
 
             robot->setJointPosition(qCommand);
         }

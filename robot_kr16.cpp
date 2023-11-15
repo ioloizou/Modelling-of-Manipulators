@@ -79,89 +79,79 @@ vpColVector ecn::RobotKr16::inverseGeometry(const vpHomogeneousMatrix &fMe_des, 
     // TODO add candidates
 
 
-            // TODO add candidates
-                    // for this robot, we are going to divide in translation part and rotation part
+            auto q1{atan2(-ty,tx)};
+    const auto c1{cos(q1)};
+    const auto s1{sin(q1)};
 
-                    //Translation Part
-                    //Notice that the  coeficient of second equation is equals to the coeficient of first equation, so, if, we divide then, we get: tan(q1) = -ty/tx
+    for(auto [q2, q23]: solveType7 (-0.68, 0, (tx/c1)-0.26, -tz+0.675, 0.67, -0.035))
 
-                    auto q1{atan2(-ty,tx)};
-                    const auto c1{cos(q1)};
-                    const auto s1{sin(q1)};
+    {
+        const auto c23{cos(q23)};
+        const auto s23{sin(q23)};
 
-                   for(auto [q2, q23]: solveType7 (-0.68, 0, (tx/c1)-0.26, -tz+0.675, 0.67, -0.035))
+        const auto c2{cos(q2)};
+        const auto s2{sin(q2)};
 
-                     {
-                       const auto c23{cos(q23)};
-                       const auto s23{sin(q23)};
+        auto q3 = q23 -q2;
 
-                       const auto c2{cos(q2)};
-                       const auto s2{sin(q2)};
+        vpRotationMatrix R03;
+        vpRotationMatrix R36;
 
-                     auto q3 = q23 -q2;
+        //Rotation 0R3 from root frame to frame 3:
+        R03[0][0] = s23*c1;
+        R03[0][1] = -c1*c23;
+        R03[0][2] = -s1;
+        R03[1][0] = -s1*s23;
+        R03[1][1] = s1*c23;
+        R03[1][2] = -c1;
+        R03[2][0] = c23;
+        R03[2][1] = s23;
+        R03[2][2] = 0;
 
-                    //Rotation Part
-                     vpRotationMatrix R03;
-                     vpRotationMatrix R36;
-
-                     //Rotation 0R3 from root frame to frame 3:
-                     R03[0][0] = s23*c1;
-                     R03[0][1] = -c1*c23;
-                     R03[0][2] = -s1;
-                     R03[1][0] = -s1*s23;
-                     R03[1][1] = s1*c23;
-                     R03[1][2] = -c1;
-                     R03[2][0] = c23;
-                     R03[2][1] = s23;
-                     R03[2][2] = 0;
-
-                     R36 = R03.t() * (fMe_des.getRotationMatrix());
+        R36 = R03.t() * (fMe_des.getRotationMatrix());
 
 
 
-                    for(auto q5: solveType2 (0, -1, R36[1][2]))
+        for(auto q5: solveType2 (0, -1, R36[1][2]))
+        {
+
+            if (q5 != isNull(q5)){
+
+                auto s5 = sin(q5);
+                for(auto q6: solveType3(0, -s5, R36[1][0], -s5, 0, R36[1][1]))
+                {
+
+                    for(auto q4: solveType3 (0, -s5, R36[0][2], s5, 0, R36[2][2]))
                     {
 
-                      if (q5 != isNull(q5)){
-
-                          auto s5 = sin(q5);
-                        for(auto q6: solveType3(0, -s5, R36[1][0], -s5, 0, R36[1][1]))
-                        {
-
-                            for(auto q4: solveType3 (0, -s5, R36[0][2], s5, 0, R36[2][2]))
-                            {
-
-                                addCandidate({q1,q2,q3,q4,q5,q6+M_PI});
-                            }
-                        }
-                      }
-                      else{
-                          for(auto q46: solveType2(0, 1, R36[0][0])){
-                             const auto c46{cos(q46)};
-                             const auto s46{sin(q46)};
-
-                              auto q6 = 0.5*(q46-q0[3]+q0[5]);
-                              auto q4 = q46 - q6;
-
-                              const auto c6{cos(q6)};
-                              const auto s6{sin(q6)};
-                                cout <<q6<<endl;
-
-                               const auto c4{cos(q4)};
-                               const auto s4{sin(q4)};
-                                cout <<q4<<endl;
-
-                               addCandidate({q1,q2,q3,q4,q5,q6});
-
-
-
-
-                      }
-
+                        addCandidate({q1,q2,q3,q4,q5,q6+M_PI});
                     }
-
-                  }
                 }
+            }
+            else{
+                for(auto q46: solveType2(0, 1, R36[0][0])){
+                    const auto c46{cos(q46)};
+                    const auto s46{sin(q46)};
+
+                    auto q6 = 0.5*(q46-q0[3]+q0[5]);
+                    auto q4 = q46 - q6;
+
+                    const auto c6{cos(q6)};
+                    const auto s6{sin(q6)};
+                    cout <<q6<<endl;
+
+                    const auto c4{cos(q4)};
+                    const auto s4{sin(q4)};
+                    cout <<q4<<endl;
+
+                    addCandidate({q1,q2,q3,q4,q5,q6});
+
+                }
+
+            }
+
+        }
+    }
 
 
 
