@@ -1,4 +1,4 @@
-    #include <ecn_manip/robot_init.h>
+#include <ecn_manip/robot_init.h>
 
 using namespace std;
 using namespace ecn;
@@ -74,13 +74,11 @@ int main(int argc, char ** argv)
             ecn::putAt(Map_matrix, Mfe, 3, 3);
 
             auto fve = Map_matrix*v;
-
             auto qdot = (robot->fJe(q).pseudoInverse())*(fve);
 
 
             // TODO: compute vCommand
             auto vCommand = qdot;
-
             robot->setJointVelocity(vCommand);
         }
 
@@ -104,30 +102,31 @@ int main(int argc, char ** argv)
                 q0 = robot->inverseGeometry(M0, q);
                 qf = robot->inverseGeometry(Md, q);
 
+                //double Pt;
+                //double t;
+                double dq;
+                double tf_vel;
+                double tf_acc;
+                double tf_chosen = tf;
+                tf = 0;
+                for (int i=0; i<6 ; i++){                                   //check that qf respects velocity and acceleration constraints
+                    dq = qf[i] - q0[i];
+
+                    tf_vel = (3 * abs(dq)) / (2 * vMax[i]);
+                    tf_acc = sqrt((6 * abs(dq)) / (aMax[i]));
+
+                    tf_chosen = max(tf_vel,tf_acc);
+                    if (tf_chosen > tf){
+                        tf = tf_chosen;
+                    }
+                }
+
             }
 
             // TODO: compute qCommand from q0, qf, t, t0 and tf
-            auto Pt{0};
-            double t{0};
-            auto tf_vel{0};
-            auto tf_acc{0};
-            auto tf_chosen{0};
+            auto Pt = (3 *pow(((t-t0)/tf),2)) - (2 *pow(((t-t0)/tf),3));
 
-
-
-            for (int i=0; i<6 ; i++){                       //check that qf respects velocity and acceleration constraints
-                tf_vel = (3 * abs(qf[i] - q0[i])) / (2 * vMax[i]);
-                tf_acc = sqrt((6 * abs(qf[i] - q0[i])) / aMax[i]);
-                tf_chosen = max(tf_vel,tf_acc);
-                if (tf_chosen > tf){
-                    tf = tf_chosen;
-                }
-            }
-
-            Pt = pow(3 * (t/tf), 2) - (-2 * (pow(t/tf, 3)));
-
-            qCommand = q0 + Pt * qf - q0;
-
+            qCommand = q0 + Pt * (qf - q0);
             robot->setJointPosition(qCommand);
         }
 
@@ -135,17 +134,15 @@ int main(int argc, char ** argv)
         else if(robot->mode() == ControlMode::STRAIGHT_LINE_P2P)
         {
             // go from M0 to Md in 1 sec
-            tf = 0.1;
+            tf = 1;
 
             // TODO: compute qCommand from M0, Md, t, t0 and tf
             // use robot->intermediaryPose to build poses between M0 and Md
+
             double alpha = (t-t0)/tf ;
-
-//            if (alpha > 1) alpha = 1;
-
-            vpHomogeneousMatrix M_inder = robot->intermediaryPose(M0, Md, alpha);
-
-            qCommand = robot->inverseGeometry(M_inder, q);
+            if (alpha > 1) alpha = 1;
+            Mi = robot->intermediaryPose(M0, Md, alpha);
+            qCommand = robot->inverseGeometry(Mi, q);
 
             robot->setJointPosition(qCommand);
         }
@@ -157,15 +154,13 @@ int main(int argc, char ** argv)
 
             // TODO: compute joint velocity command
 
-
             auto Merror = Md.inverse() * M;
             auto translation = Merror.getTranslationVector();
-            auto thetau = Merror.getThetaUVector();
-
+            auto theta_u = Merror.getThetaUVector();
             auto lambda = robot->lambda();
 
-            vpColVector v = lambda * Md.getRotationMatrix() * translation;
-            vpColVector omega = lambda * M.getRotationMatrix() * thetau.getTheta() * thetau.getU();
+            vpColVector v = -lambda * Md.getRotationMatrix() * translation;
+            vpColVector omega = -lambda * M.getRotationMatrix() * (theta_u.getTheta() * theta_u.getU());
 
             vpColVector velocityVector(6);
             ecn::putAt(velocityVector, v, 0);
@@ -173,6 +168,7 @@ int main(int argc, char ** argv)
 
 
             vCommand = robot->fJe(q).pseudoInverse() * velocityVector;
+
 
             robot->setJointVelocity(vCommand);
         }

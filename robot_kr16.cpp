@@ -7,23 +7,24 @@
 void ecn::RobotKr16::init_wMe()
 {
     // Generated end-effector code
-       wMe[0][0] = 1.;
-       wMe[0][1] = 0;
-       wMe[0][2] = 0;
-       wMe[0][3] = 0;
-       wMe[1][0] = 0;
-       wMe[1][1] = -1.;
-       wMe[1][2] = 0;
-       wMe[1][3] = 0;
-       wMe[2][0] = 0;
-       wMe[2][1] = 0;
-       wMe[2][2] = -1.;
-       wMe[2][3] = -0.158000000000000;
-       wMe[3][0] = 0;
-       wMe[3][1] = 0;
-       wMe[3][2] = 0;
-       wMe[3][3] = 1.;
-       // End of end-effector code
+      wMe[0][0] = 1.;
+      wMe[0][1] = 0;
+      wMe[0][2] = 0;
+      wMe[0][3] = 0;
+      wMe[1][0] = 0;
+      wMe[1][1] = -1.;
+      wMe[1][2] = 0;
+      wMe[1][3] = 0;
+      wMe[2][0] = 0;
+      wMe[2][1] = 0;
+      wMe[2][2] = -1.;
+      wMe[2][3] = -0.158000000000000;
+      wMe[3][0] = 0;
+      wMe[3][1] = 0;
+      wMe[3][2] = 0;
+      wMe[3][3] = 1.;
+      // End of end-effector code
+
 
 
 }
@@ -33,37 +34,35 @@ vpHomogeneousMatrix ecn::RobotKr16::fMw(const vpColVector &q) const
 {
     vpHomogeneousMatrix M;
     // Generated pose code
-      const auto c1{cos(q[0])};
-      const auto c2{cos(q[1])};
-      const auto c4{cos(q[3])};
-      const auto c5{cos(q[4])};
-      const auto c6{cos(q[5])};
-      const auto c23{cos(q[1]+q[2])};
-      const auto s1{sin(q[0])};
-      const auto s2{sin(q[1])};
-      const auto s4{sin(q[3])};
-      const auto s5{sin(q[4])};
-      const auto s6{sin(q[5])};
-      const auto s23{sin(q[1]+q[2])};
-      M[0][0] = (-(s1*s4 + s23*c1*c4)*c5 - s5*c1*c23)*c6 - (s1*c4 - s4*s23*c1)*s6;
-      M[0][1] = -(-(s1*s4 + s23*c1*c4)*c5 - s5*c1*c23)*s6 - (s1*c4 - s4*s23*c1)*c6;
-      M[0][2] = (s1*s4 + s23*c1*c4)*s5 - c1*c5*c23;
-      M[0][3] = (-0.035*s23 + 0.68*c2 + 0.67*c23 + 0.26)*c1;
-      M[1][0] = ((s1*s23*c4 - s4*c1)*c5 + s1*s5*c23)*c6 - (s1*s4*s23 + c1*c4)*s6;
-      M[1][1] = -((s1*s23*c4 - s4*c1)*c5 + s1*s5*c23)*s6 - (s1*s4*s23 + c1*c4)*c6;
-      M[1][2] = -(s1*s23*c4 - s4*c1)*s5 + s1*c5*c23;
-      M[1][3] = (0.035*s23 - 0.68*c2 - 0.67*c23 - 0.26)*s1;
-      M[2][0] = (s5*s23 - c4*c5*c23)*c6 + s4*s6*c23;
-      M[2][1] = -(s5*s23 - c4*c5*c23)*s6 + s4*c6*c23;
-      M[2][2] = s5*c4*c23 + s23*c5;
-      M[2][3] = -0.68*s2 - 0.67*s23 - 0.035*c23 + 0.675;
-      M[3][0] = 0;
-      M[3][1] = 0;
-      M[3][2] = 0;
-      M[3][3] = 1.;
-      // End of pose code
-
-
+        const auto c1{cos(q[0])};
+        const auto c2{cos(q[1])};
+        const auto c4{cos(q[3])};
+        const auto c5{cos(q[4])};
+        const auto c6{cos(q[5])};
+        const auto c23{cos(q[1]+q[2])};
+        const auto s1{sin(q[0])};
+        const auto s2{sin(q[1])};
+        const auto s4{sin(q[3])};
+        const auto s5{sin(q[4])};
+        const auto s6{sin(q[5])};
+        const auto s23{sin(q[1]+q[2])};
+        M[0][0] = (-(s1*s4 + s23*c1*c4)*c5 - s5*c1*c23)*c6 - (s1*c4 - s4*s23*c1)*s6;
+        M[0][1] = -(-(s1*s4 + s23*c1*c4)*c5 - s5*c1*c23)*s6 - (s1*c4 - s4*s23*c1)*c6;
+        M[0][2] = (s1*s4 + s23*c1*c4)*s5 - c1*c5*c23;
+        M[0][3] = (-0.035*s23 + 0.68*c2 + 0.67*c23 + 0.26)*c1;
+        M[1][0] = ((s1*s23*c4 - s4*c1)*c5 + s1*s5*c23)*c6 - (s1*s4*s23 + c1*c4)*s6;
+        M[1][1] = -((s1*s23*c4 - s4*c1)*c5 + s1*s5*c23)*s6 - (s1*s4*s23 + c1*c4)*c6;
+        M[1][2] = -(s1*s23*c4 - s4*c1)*s5 + s1*c5*c23;
+        M[1][3] = (0.035*s23 - 0.68*c2 - 0.67*c23 - 0.26)*s1;
+        M[2][0] = (s5*s23 - c4*c5*c23)*c6 + s4*s6*c23;
+        M[2][1] = -(s5*s23 - c4*c5*c23)*s6 + s4*c6*c23;
+        M[2][2] = s5*c4*c23 + s23*c5;
+        M[2][3] = -0.68*s2 - 0.67*s23 - 0.035*c23 + 0.675;
+        M[3][0] = 0;
+        M[3][1] = 0;
+        M[3][2] = 0;
+        M[3][3] = 1.;
+        // End of pose code
 
     return M;
 }
@@ -75,97 +74,62 @@ vpColVector ecn::RobotKr16::inverseGeometry(const vpHomogeneousMatrix &fMe_des, 
     // build corresponding oMw and explode into 12 elements
     const auto [xx,xy,xz,yx,yy,yz,zx,zy,zz,tx,ty,tz] = explodeMatrix(fMe_des);
 
+     // TODO add candidates
 
-    // TODO add candidates
-
-
-            auto q1{atan2(-ty,tx)};
-    const auto c1{cos(q1)};
-    const auto s1{sin(q1)};
-
-    for(auto [q2, q23]: solveType7 (-0.68, 0, (tx/c1)-0.26, -tz+0.675, 0.67, -0.035))
-
+    auto q1 = atan2(-ty,tx);
+    auto c1 = cos(q1);
+    for (auto [q2,q23] : solveType7(-0.68,0,(tx/c1)-0.26,0.675-tz,0.67,-0.035))
     {
-        const auto c23{cos(q23)};
-        const auto s23{sin(q23)};
-
-        const auto c2{cos(q2)};
-        const auto s2{sin(q2)};
-
-        auto q3 = q23 -q2;
+        auto q3 = q23 - q2;
 
         vpRotationMatrix R03;
-        vpRotationMatrix R36;
-
-        //Rotation 0R3 from root frame to frame 3:
-        R03[0][0] = s23*c1;
+        const auto c23{cos(q2+q3)};
+        const auto s1{sin(q1)};
+        const auto s23{sin(q2+q3)};
+        R03[0][0] = -s23*c1;
         R03[0][1] = -c1*c23;
-        R03[0][2] = -s1;
-        R03[1][0] = -s1*s23;
+        R03[0][2] = s1;
+        R03[1][0] = s1*s23;
         R03[1][1] = s1*c23;
-        R03[1][2] = -c1;
-        R03[2][0] = c23;
+        R03[1][2] = c1;
+        R03[2][0] = -c23;
         R03[2][1] = s23;
         R03[2][2] = 0;
 
-        R36 = R03.t() * (fMe_des.getRotationMatrix());
+        vpRotationMatrix R36;
+        R36 = R03.t() * (fMe_des * wMe.inverse()).getRotationMatrix();       //Numerical
 
-
-
-        for(auto q5: solveType2 (0, -1, R36[1][2]))
-        {
-
+        for(auto q5 :solveType2(0,1,R36[1][2])){
+            auto s5 = sin(q5);
             if (q5 != isNull(q5)){
-
-                auto s5 = sin(q5);
-                for(auto q6: solveType3(0, -s5, R36[1][0], -s5, 0, R36[1][1]))
+                for(auto q6 : solveType3(-s5,0,R36[1][1],0,s5,R36[1][0]))
                 {
-
-                    for(auto q4: solveType3 (0, -s5, R36[0][2], s5, 0, R36[2][2]))
+                    for(auto q4 : solveType3(0, -s5, R36[0][2], s5, 0, R36[2][2]))
                     {
-
-                        addCandidate({q1,q2,q3,q4,q5,q6+M_PI});
+                        addCandidate({q1,q2,q3,q4,q5,q6});
                     }
                 }
             }
             else{
-                for(auto q46: solveType2(0, 1, R36[0][0])){
-                    const auto c46{cos(q46)};
-                    const auto s46{sin(q46)};
-
-                    auto q6 = 0.5*(q46-q0[3]+q0[5]);
+                for (auto q46 : solveType3(0,1,R36[0][0],-1,0,R36[0][1]))
+                {
+                    auto q6 = 0.5*(q46 - q0[3] + q0[5]);
                     auto q4 = q46 - q6;
-
-                    const auto c6{cos(q6)};
-                    const auto s6{sin(q6)};
-                    cout <<q6<<endl;
-
-                    const auto c4{cos(q4)};
-                    const auto s4{sin(q4)};
-                    cout <<q4<<endl;
-
                     addCandidate({q1,q2,q3,q4,q5,q6});
-
                 }
-
             }
-
         }
     }
-
 
 
     return bestCandidate(q0);
 }
 
-
 vpMatrix ecn::RobotKr16::fJw(const vpColVector &q) const
 {
     vpMatrix J(6, dofs);
-
-
     // Generated Jacobian code
-        const auto c1{cos(q[0])};
+    const auto c1{cos(q[0])};
         const auto c2{cos(q[1])};
         const auto c4{cos(q[3])};
         const auto c5{cos(q[4])};
@@ -211,9 +175,8 @@ vpMatrix ecn::RobotKr16::fJw(const vpColVector &q) const
         J[5][3] = s23;
         J[5][4] = -s4*c23;
         J[5][5] = s5*c4*c23 + s23*c5;
-      // End of Jacobian code
 
-
+       // End of Jacobian code
 
     return J;
 }
